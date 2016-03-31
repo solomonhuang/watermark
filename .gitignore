@@ -1,0 +1,9 @@
+*.pyc
+watermark.exe
+watermark.spec
+build
+*.jpg
+*.jpeg
+*.bmp
+*.png
+*.gif
