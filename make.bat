@@ -7,6 +7,6 @@ if "%1" == "clean" (
   goto end
 )
 
-pyinstaller --onefile --distpath . src\watermark.py
+pyinstaller --onefile -i icon.ico --distpath . src\watermark.py
 
 :end
