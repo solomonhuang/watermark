@@ -1,8 +1,9 @@
 # -*- coding:utf-8 -*-
+import os
 import argparse
 from PIL import Image
 
-def roll_mask(image, mask_size):
+def roll_mask(image, mask_size, alpha=0.2):
     mask_xsize, mask_ysize = mask_size
 
     image = image.convert("RGBA")
@@ -10,9 +11,9 @@ def roll_mask(image, mask_size):
     newDatas = []
     for item in datas:
         if item[0] >= 240 and item[1] >= 240 and item[2] >= 240:
-            newDatas.append((255,255,255,0))
+            newDatas.append((item[0], item[1], item[2],0))
         else:
-            newDatas.append((item[0], item[1], item[2], 50))
+            newDatas.append((item[0], item[1], item[2], int(255*alpha)))
 
     image.putdata(newDatas)
 
@@ -34,11 +35,31 @@ def roll_mask(image, mask_size):
     im = im.crop((crop_left, crop_top, crop_right, crop_bot))
     return im
 
+parser = argparse.ArgumentParser(prog="watermark",
+                                 description="Watermark: add watermark on images")
 
-outfile = "result.jpg"
-mask = Image.open("mask.jpg")
-target = Image.open("target.jpg")
+parser.add_argument('-m', type=str, help="Watermark picture", required=True)
+parser.add_argument('-i', type=str, help="Target picture", required=True)
+parser.add_argument('-t', type=float, help="Watermark transparent value(default: 0.2)", default=.2)
+parser.add_argument('-d', type=str, help="Result director", default="results")
+
+#parser.print_help()
+args = parser.parse_args()
+#print(args.i)
+#print(args.m)
+#print(args.t)
+#print(args.d)
+
+try:
+    os.mkdir(args.d)
+except:
+    pass
+
+outfile = args.d + os.sep + os.path.basename(args.i)
+
+mask = Image.open(args.m)
+target = Image.open(args.i)
 target = target.convert("RGBA")
-mask = roll_mask(mask, target.size)
+mask = roll_mask(mask, target.size, args.t)
 im = Image.alpha_composite(target, mask)
 im.save(outfile)
