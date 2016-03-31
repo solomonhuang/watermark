@@ -1,1 +1,1 @@
-pyinstaller --onefile --distpath . watermark.py
+pyinstaller --onefile --distpath . src\watermark.py
